@@ -1,0 +1,14 @@
+VERSION := $(shell git describe --tags --abbrev=0)
+APP := {{.AppName}}
+
+build: tailwind.css
+	go build .
+
+tailwind.css:
+	curl https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4 > tailwind.css
+
+release: tailwind.css
+	GOOS=linux GOARCH=amd64 \
+		go build -tags release \
+		-ldflags '-X {{.ModuleName}}/internal/buildinfo.Version=$(VERSION)' \
+		-o $(APP)
