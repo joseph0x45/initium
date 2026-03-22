@@ -32,6 +32,6 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          name: "${{ env.VERSION }}"
-          tag_name: "${{ env.VERSION }}"
+          name: {{"${{ env.VERSION }}"}}
+          tag_name: {{"${{ env.VERSION }}"}}
           files: {{.AppName}}

@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path"
+
+	"os"
 	"strings"
 	"text/template"
 )
 
-//go:embed templates
+//go:embed all:templates/*
 var templatesFS embed.FS
 
 var version = "debug"
@@ -40,30 +41,43 @@ func main() {
 		if err != nil {
 			return err
 		}
-		relativePath := strings.TrimPrefix(entryPath, templatePath+"/")
-		if relativePath == templatePath {
+		trimmedPath := strings.TrimPrefix(entryPath, templatePath)
+		trimmedPath = strings.TrimPrefix(trimmedPath, "/")
+		if trimmedPath == "" {
 			return nil
 		}
-		targetPath := path.Join(".", relativePath)
+		targetPath := path.Join(".", trimmedPath)
 		if d.IsDir() {
-			return os.MkdirAll(targetPath, 0755)
+			err := os.MkdirAll(targetPath, 0755)
+			if err != nil {
+				fmt.Println(err)
+			}
+			return nil
 		}
 		content, err := templatesFS.ReadFile(entryPath)
 		if err != nil {
 			return err
 		}
 		targetPath = strings.TrimSuffix(targetPath, ".tmpl")
-		tmpl, err := template.New(relativePath).Parse(string(content))
+		err = os.MkdirAll(path.Dir(targetPath), 0755)
 		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		tmpl, err := template.New(trimmedPath).Parse(string(content))
+		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 		f, err := os.Create(targetPath)
 		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 		defer f.Close()
 		err = tmpl.Execute(f, varsMap)
 		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 		return nil
