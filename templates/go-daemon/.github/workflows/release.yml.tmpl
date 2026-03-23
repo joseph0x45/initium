@@ -21,7 +21,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "{{.ModuleName}}"
+          go-version: "{{.GoVersion}}"
 
       - name: Get version from tag
         run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
