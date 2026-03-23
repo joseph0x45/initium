@@ -9,9 +9,10 @@ type projectTemplate struct {
 var availableTemplates = map[string]*projectTemplate{
 	"go-daemon": {
 		RequiredVars: map[string]bool{
-			"ModuleName": true,
-			"GoVersion":  true,
-			"AppName":    true,
+			"ModuleName":     true,
+			"GoVersion":      true,
+			"AppName":        true,
+			"AppDescription": true,
 		},
 	},
 }
